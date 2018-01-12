@@ -1,9 +1,6 @@
 package main
 
-import (
-	"fmt"
-	"os"
-)
+import "os"
 
 const (
 	ENV_KEY_OSS_ENDPOINT  = "OSS_UPLOADER_ENDPOINT"
@@ -11,14 +8,30 @@ const (
 	ENV_KEY_OSS_AK_SECRET = "OSS_UPLOADER_ACCESS_KEY_SECRET"
 )
 
-func errEnvIsMissing(k string) error {
-	return fmt.Errorf("env %s is missing", k)
+var (
+	OSSSettingsSet     string
+	OSSEndpoint        string
+	OSSAccessKeyId     string
+	OSSAccessKeySecret string
+)
+
+func mustReadEnvvar(envkey string) string {
+	value := os.Getenv(envkey)
+	if value == "" {
+		abortf("env %s is missing", envkey)
+	}
+
+	return value
 }
 
 func mustInitEnvvars() {
-	for _, k := range []string{ENV_KEY_OSS_ENDPOINT, ENV_KEY_OSS_AK_ID, ENV_KEY_OSS_AK_SECRET} {
-		if os.Getenv(k) == "" {
-			abort(errEnvIsMissing(k))
-		}
+	if OSSSettingsSet != "" {
+		// already set before
+		return
 	}
+
+	OSSEndpoint = mustReadEnvvar(ENV_KEY_OSS_ENDPOINT)
+	OSSAccessKeyId = mustReadEnvvar(ENV_KEY_OSS_AK_ID)
+	OSSAccessKeySecret = mustReadEnvvar(ENV_KEY_OSS_AK_SECRET)
+	OSSSettingsSet = "true"
 }
