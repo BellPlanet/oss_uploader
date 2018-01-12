@@ -21,3 +21,7 @@ export OSS_UPLOADER_ACCESS_KEY_ID=xxx
 export OSS_UPLOADER_ACCESS_KEY_SECRET=supersecret
 oss-uploader download bucket myfile:myfile.zip
 ```
+
+## License
+
+see [LICENSE](./LICENSE.md)
