@@ -8,6 +8,22 @@ import (
 	"sync"
 )
 
+func mustParseObjKeyAndFile(objFilePair string) (string, string) {
+	p := strings.SplitN(objFilePair, ":", 2)
+	objKey := p[0]
+	if len(objKey) == 0 {
+		abortf("invalid object key: %s", objFilePair)
+		return "", ""
+	}
+	filePath := p[1]
+	if len(filePath) == 0 {
+		abortf("invalid file path: %s", objFilePair)
+		return "", ""
+	}
+
+	return objKey, filePath
+}
+
 const uploadUsageDoc = `oss-uploader upload BUCKET OBJKEY:FILE...`
 
 func uploadExecute(args []string) {
@@ -28,31 +44,11 @@ func uploadExecute(args []string) {
 	objFilePairs := flagSet.Args()[1:]
 
 	mustInitEnvvars()
-	client := MustMakeOSSClient(
-		os.Getenv(ENV_KEY_OSS_ENDPOINT),
-		os.Getenv(ENV_KEY_OSS_AK_ID),
-		os.Getenv(ENV_KEY_OSS_AK_SECRET),
-	)
-
-	bucket, err := client.Bucket(bucketName)
-	if err != nil {
-		abort(err)
-		return
-	}
+	bucket := MustGetOSSBucket(bucketName)
 
 	var uploadJob sync.WaitGroup
 	for _, objFilePair := range objFilePairs {
-		p := strings.SplitN(objFilePair, ":", 2)
-		objKey := p[0]
-		if len(objKey) == 0 {
-			abortf("invalid object key: %s", objFilePair)
-			return
-		}
-		filePath := p[1]
-		if len(filePath) == 0 {
-			abortf("invalid file path: %s", objFilePair)
-			return
-		}
+		objKey, filePath := mustParseObjKeyAndFile(objFilePair)
 
 		uploadJob.Add(1)
 		go func(objKey, filePath string) {

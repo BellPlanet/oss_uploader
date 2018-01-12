@@ -6,8 +6,18 @@
 
 ## Usage
 
+### Upload
+
 ```
 export OSS_UPLOADER_ACCESS_KEY_ID=xxx
 export OSS_UPLOADER_ACCESS_KEY_SECRET=supersecret
-oss-uploader upload bucket myfile.zip
+oss-uploader upload bucket myfile:myfile.zip
+```
+
+### Download
+
+```
+export OSS_UPLOADER_ACCESS_KEY_ID=xxx
+export OSS_UPLOADER_ACCESS_KEY_SECRET=supersecret
+oss-uploader download bucket myfile:myfile.zip
 ```

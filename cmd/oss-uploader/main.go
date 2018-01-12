@@ -11,6 +11,7 @@ oss-uploader [-help]
 
 Commands:
   upload Upload files to OSS.
+  download Download files from OSS.
 `
 
 func main() {
@@ -28,6 +29,9 @@ func main() {
 	case "upload":
 		args := flag.Args()[1:]
 		uploadExecute(args)
+	case "download":
+		args := flag.Args()[1:]
+		downloadExecute(args)
 	default:
 		flag.Usage()
 		os.Exit(1)
